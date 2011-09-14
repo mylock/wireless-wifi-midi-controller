@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, WifiMidiControllerActivity!</string>
+    <string name="app_name">Wifi Midi Controller</string>
+    <string name="menu_piano_roll">Piano Roll</string>
+    <string name="menu_settings">Settings</string>
+</resources>
