@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item android:title="@string/menu_piano_roll"
-		android:alphabeticShortcut="p" android:id="@+id/menu_piano_roll"
-		android:icon="@drawable/ic_menu_music_library">
-	</item>
-
 	<item android:id="@+id/menu_settings" android:title="@string/menu_settings"
 		android:alphabeticShortcut="s" android:icon="@drawable/ic_menu_settings">
 	</item>
