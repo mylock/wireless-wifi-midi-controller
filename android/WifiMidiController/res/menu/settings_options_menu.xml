@@ -5,4 +5,8 @@
 		android:alphabeticShortcut="b" android:icon="@drawable/ic_menu_back">
 	</item>
 
+	<item android:id="@+id/menu_refresh" android:title="@string/menu_refresh"
+		android:alphabeticShortcut="r" android:icon="@drawable/ic_menu_refresh">
+	</item>
+
 </menu>
