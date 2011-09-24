@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
@@ -36,14 +37,18 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 		this.preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		this.preferences.registerOnSharedPreferenceChangeListener(this);
 
+		// TODO boot on start
+		// startService(new Intent(this, UdpBroadcastService.class));
+
 		Log.d(LOG_TAG, "+++ onCreate()");
 	}
 
 	@Override
 	public void onTerminate() {
-		super.onTerminate();
 
-		Log.d(LOG_TAG, "+++ onTerminate()");
+		// TODO
+
+		super.onTerminate();
 	}
 
 	// OnSharedPreferenceChangeListener

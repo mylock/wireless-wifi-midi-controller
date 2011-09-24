@@ -65,9 +65,9 @@ public class SettingsActivity extends ListActivity implements OnSharedPreference
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem menuItem) {
-		boolean optionsItemSelected = super.onOptionsItemSelected(menuItem);
-		switch (menuItem.getItemId()) {
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean optionsItemSelected = super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
 		case R.id.menu_back:
 			finish();
 			optionsItemSelected = true;

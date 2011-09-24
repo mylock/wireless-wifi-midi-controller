@@ -49,9 +49,9 @@ public class PianoRollActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem menuItem) {
-		boolean optionsItemSelected = super.onOptionsItemSelected(menuItem);
-		switch (menuItem.getItemId()) {
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean optionsItemSelected = super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
 		case R.id.menu_settings:
 			Intent intent = new Intent(SettingsActivity.ACTION_NAME_SHOW_SETTINGS);
 			startActivity(intent);
@@ -77,16 +77,13 @@ public class PianoRollActivity extends Activity implements OnClickListener {
 
 	// AsyncTask
 
-	private class SendToMidi extends AsyncTask<String, Integer, String> {
+	private class ClientSender extends AsyncTask<String, Integer, Integer> {
 
 		@Override
-		protected String doInBackground(String... params) {
-
-			// TODO
-
+		protected Integer doInBackground(String... notes) {
 			try {
 
-				PianoRollActivity.this.application.getUdpSender().send(params[0]);
+				PianoRollActivity.this.application.getUdpSender().send(notes[0]);
 
 			} catch (Exception e) {
 				Log.e(LOG_TAG, "An error occurred when sending the UDP packet.");
@@ -94,7 +91,7 @@ public class PianoRollActivity extends Activity implements OnClickListener {
 
 			// TODO
 
-			return null;
+			return 0;
 		}
 
 	}
@@ -103,7 +100,10 @@ public class PianoRollActivity extends Activity implements OnClickListener {
 
 	private void sendTestNotes() {
 		for (NoteEnum noteEnum : NoteEnum.values()) {
-			new SendToMidi().execute(noteEnum.getTone());
+
+			// TODO check the status
+
+			new ClientSender().execute(noteEnum.getTone());
 		}
 	}
 
