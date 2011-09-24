@@ -10,6 +10,8 @@ package cz.pblazek.wwmc;
  * 
  */
 public class UdpReceiver {
+	
+	public static final String LOG_TAG = UdpReceiver.class.getSimpleName();
 
 	// TODO
 
