@@ -1,74 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_width="match_parent" android:layout_height="match_parent">
 
-	<!-- only for tests - remove this block -->
-	<Button android:id="@+id/button_1" android:layout_x="0px"
-		android:layout_y="4px" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Button">
-	</Button>
+	<!-- FIXME: AbsoluteLayout is deprecated -->
 
-	<ImageButton android:id="@+id/white_01" android:layout_x="0dp"
-		android:layout_y="2dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/white_02" android:layout_x="0dp"
-		android:layout_y="74dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/white_03" android:layout_x="0dp"
-		android:layout_y="146dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/white_04" android:layout_x="0dp"
-		android:layout_y="218dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/white_05" android:layout_x="0dp"
-		android:layout_y="290dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/white_06" android:layout_x="0dp"
-		android:layout_y="362dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/white_07" android:layout_x="0dp"
-		android:layout_y="434dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/white"
-		android:padding="0px">
-	</ImageButton>
-
-	<ImageButton android:id="@+id/black_01" android:layout_x="160dp"
-		android:layout_y="50dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/black"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/black_02" android:layout_x="160dp"
-		android:layout_y="122dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/black"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/black_03" android:layout_x="160dp"
-		android:layout_y="266dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/black"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/black_04" android:layout_x="160dp"
-		android:layout_y="338dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/black"
-		android:padding="0px">
-	</ImageButton>
-	<ImageButton android:id="@+id/black_05" android:layout_x="160dp"
-		android:layout_y="410dp" android:layout_height="wrap_content"
-		android:layout_width="wrap_content" android:src="@drawable/black"
-		android:padding="0px">
-	</ImageButton>
+	<view class="cz.pblazek.wwmc.PianoRollActivity$PianoRollView"
+		android:id="@+id/piano_roll_view" android:layout_width="match_parent"
+		android:layout_height="match_parent" android:background="@drawable/background"
+		android:scaleType="matrix" android:visibility="visible"
+		android:hapticFeedbackEnabled="true" android:focusableInTouchMode="true">
+	</view>
 
 </AbsoluteLayout>

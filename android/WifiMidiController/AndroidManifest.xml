@@ -8,15 +8,14 @@
 	<application android:name=".WifiMidiControllerApplication"
 		android:label="@string/app_name" android:icon="@drawable/app_wwmc">
 
-		<activity android:name=".PianoRollActivity" android:label="@string/app_name"
-			android:theme="@android:style/Theme.NoTitleBar"
-			android:screenOrientation="portrait">
+		<activity android:name=".PianoRollActivity"
+			android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".SettingsActivity" android:label="@string/menu_settings">
+		<activity android:name=".SettingsActivity" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name="cz.pblazek.wwmc.SHOW_SETTINGS" />
 				<category android:name="android.intent.category.DEFAULT" />
