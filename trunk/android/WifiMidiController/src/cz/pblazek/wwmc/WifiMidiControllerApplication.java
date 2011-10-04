@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.app.Application;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
@@ -28,6 +27,8 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 
 	private volatile UdpSender udpSender;
 
+	private volatile UdpReceiver udpReceiver;
+
 	// Application
 
 	@Override
@@ -37,25 +38,28 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 		this.preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		this.preferences.registerOnSharedPreferenceChangeListener(this);
 
-		// TODO boot on start
-		// startService(new Intent(this, UdpBroadcastService.class));
-
-		Log.d(LOG_TAG, "+++ onCreate()");
-	}
-
-	@Override
-	public void onTerminate() {
-
-		// TODO
-
-		super.onTerminate();
+		// TODO startService(new Intent(this, UdpBroadcastService.class));
 	}
 
 	// OnSharedPreferenceChangeListener
 
 	@Override
+	public void onTerminate() {
+		// TODO Auto-generated method stub
+
+		super.onTerminate();
+	}
+
+	// TODO destroy ... stopService(new Intent(this,
+	// UdpBroadcastService.class));
+
+	@Override
 	public synchronized void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		this.udpSender = null; // reset
+
+		// reset
+
+		this.udpSender = null;
+		this.udpReceiver = null;
 	}
 
 	// WifiMidiControllerApplication
@@ -74,10 +78,15 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 	}
 
 	public UdpReceiver getUdpReceiver() {
-		UdpReceiver udpReceiver = null;
-
-		// TODO
-
+		UdpReceiver udpReceiver = this.udpReceiver;
+		if (udpReceiver == null) {
+			synchronized (this) {
+				udpReceiver = this.udpReceiver;
+				if (udpReceiver == null) {
+					this.udpReceiver = udpReceiver = new UdpReceiver();
+				}
+			}
+		}
 		return udpReceiver;
 	}
 

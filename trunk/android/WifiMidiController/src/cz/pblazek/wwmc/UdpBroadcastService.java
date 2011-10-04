@@ -18,16 +18,16 @@ public class UdpBroadcastService extends Service {
 
 	public static final String LOG_TAG = UdpBroadcastService.class.getSimpleName();
 
-	public static final int CLIENT_RECEIVER_DELAY = 500;
+	public static final int CLIENT_RECEIVER_DELAY = 1000;
 
-	private ClientReceiver clientReceiver;
+	private DeviceReceiver clientReceiver;
 
 	// Service
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.clientReceiver = new ClientReceiver();
+		this.clientReceiver = new DeviceReceiver();
 		Log.d(LOG_TAG, "+++ onCreate()");
 	}
 
@@ -57,10 +57,10 @@ public class UdpBroadcastService extends Service {
 
 	// Thread
 
-	private class ClientReceiver extends Thread {
+	private class DeviceReceiver extends Thread {
 
-		public ClientReceiver() {
-			super(UdpBroadcastService.class.getSimpleName() + "---" + ClientReceiver.class.getSimpleName());
+		public DeviceReceiver() {
+			super(UdpBroadcastService.class.getSimpleName() + "---" + DeviceReceiver.class.getSimpleName());
 		}
 
 		@Override

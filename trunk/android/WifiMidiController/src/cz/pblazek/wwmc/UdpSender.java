@@ -35,23 +35,16 @@ public class UdpSender {
 		}
 	}
 
-	public void send(String note) throws Exception {
+	public void send(String rawData) throws Exception {
 		for (UdpClient udpClient : this.udpClients) {
-			byte[] noteData = note.getBytes();
+			byte[] data = rawData.getBytes();
 			InetAddress address = InetAddress.getByName(udpClient.getIp());
 			int port = udpClient.getPort();
-			DatagramPacket packet = new DatagramPacket(noteData, noteData.length, address, port);
+			DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
 
 			this.socket.send(packet);
-			Log.d(LOG_TAG, "+++ Packet [note=" + note + ", noteData.length=" + noteData.length + ", client=" + address + ":" + port + "]");
+			Log.d(LOG_TAG, "+++ Packet [data=" + data.toString() + ", data.length=" + data.length + ", client=" + address + ":" + port + "]");
 		}
-	}
-
-	public void close() {
-
-		// not used
-
-		this.socket.close();
 	}
 
 }
