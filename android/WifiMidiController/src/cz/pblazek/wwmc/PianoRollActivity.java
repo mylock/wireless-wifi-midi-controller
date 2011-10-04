@@ -38,7 +38,7 @@ public class PianoRollActivity extends Activity {
 
 	public static final String LOG_TAG = PianoRollActivity.class.getSimpleName();
 
-	private WifiMidiControllerApplication application;
+	private static WifiMidiControllerApplication application;
 
 	// Activity
 
@@ -49,12 +49,12 @@ public class PianoRollActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
 		setContentView(R.layout.piano_roll);
-		((PianoRollView) findViewById(R.id.piano_roll_view)).invalidate();
+		((PianoRollActivity.PianoRollView) findViewById(R.id.piano_roll_view)).invalidate();
 
-		this.application = ((WifiMidiControllerApplication) getApplication());
+		PianoRollActivity.application = ((WifiMidiControllerApplication) getApplication());
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class PianoRollActivity extends Activity {
 
 	// PianoRollView
 
-	public static class PianoRollView extends View {
+	private static class PianoRollView extends View {
 
 		private Map<NoteEnum, Region> keyRegions;
 
@@ -89,9 +89,7 @@ public class PianoRollActivity extends Activity {
 
 		private Paint keyPaint;
 
-		public PianoRollView(Context context, AttributeSet attrs, int defStyle) {
-			super(context, attrs, defStyle);
-		}
+		// TODO other constructors should be ...
 
 		public PianoRollView(Context context, AttributeSet attrs) {
 			super(context, attrs);
@@ -103,10 +101,6 @@ public class PianoRollActivity extends Activity {
 			this.keyPaint = new Paint();
 			this.keyPaint.setStyle(Style.FILL);
 			this.keyPaint.setARGB(255, 255, 180, 0);
-		}
-
-		public PianoRollView(Context context) {
-			super(context);
 		}
 
 		// View
@@ -130,15 +124,16 @@ public class PianoRollActivity extends Activity {
 			case MotionEvent.ACTION_MOVE:
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
+
+				// TODO necessary refactoring - undesirable behavior keyboard
+				// appears!
+
 				Point point = new Point((int) event.getX(pointerIndex), (int) event.getY(pointerIndex));
 
 				for (Entry<NoteEnum, Region> entry : this.keyRegions.entrySet()) {
 					Region keyRegion = entry.getValue();
 					if ((keyRegion.contains(point.x, point.y)) && (!this.touchedKeyRegions.containsValue(keyRegion))) {
-
-						// new
-						// ClientSender().execute(entry.getKey().getTone());
-						Log.d(LOG_TAG, "+++ note=" + entry.getKey().getTone());
+						new PianoRollActivity.NoteSender().execute(entry.getKey());
 
 						this.touchedKeyRegions.put(Integer.valueOf(pointerIndex), keyRegion);
 						break;
@@ -159,25 +154,25 @@ public class PianoRollActivity extends Activity {
 			invalidate();
 			return true;
 		}
+
 	}
 
-	// ClientSender
+	// NoteSender
 
-	private class ClientSender extends AsyncTask<String, Integer, Integer> {
+	private static class NoteSender extends AsyncTask<NoteEnum, Integer, Integer> {
 
 		@Override
-		protected Integer doInBackground(String... params) {
+		protected Integer doInBackground(NoteEnum... noteEnums) {
 			try {
-
-				PianoRollActivity.this.application.getUdpSender().send(params[0]);
-
+				for (NoteEnum noteEnum : noteEnums) {
+					PianoRollActivity.application.getUdpSender().send(noteEnum.getTone());
+				}
 			} catch (Exception e) {
-				Log.e(LOG_TAG, "An error occurred when sending the UDP packet.");
+				e.printStackTrace();
+				Log.e(LOG_TAG, "An error occurred when sending the UDP packet. (Network is unreachable.)");
 			}
 
-			// TODO
-
-			return 0;
+			return 0; // it can be 0
 		}
 
 	}

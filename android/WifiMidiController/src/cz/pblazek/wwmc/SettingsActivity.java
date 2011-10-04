@@ -33,7 +33,7 @@ public class SettingsActivity extends ListActivity implements OnSharedPreference
 
 	private SharedPreferences preferences;
 
-	// Activity
+	// ListActivity
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
