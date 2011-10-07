@@ -52,7 +52,7 @@ public enum NoteEnum {
 
 	private final Rect[] keyRects;
 
-	// private final int[] rgb;
+	// private final int[] rgb; // TODO future
 
 	private NoteEnum(final String tone, final Rect[] keyRects) {
 		this.tone = tone;

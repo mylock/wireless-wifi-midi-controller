@@ -8,7 +8,6 @@ package cz.pblazek.wwmc;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * @author rtep.kezalb@gmail.com
@@ -16,64 +15,68 @@ import android.util.Log;
  */
 public class UdpBroadcastService extends Service {
 
-	public static final String LOG_TAG = UdpBroadcastService.class.getSimpleName();
+	private static final String LOG_TAG = UdpBroadcastService.class.getSimpleName();
 
-	public static final int CLIENT_RECEIVER_DELAY = 1000;
+	private static final int UDP_RECEIVER_WORKER_DELAY = 2000;
 
-	private DeviceReceiver clientReceiver;
+	private WifiMidiControllerApplication application;
+
+	private boolean udpReceiverWorkerStatus;
+
+	private UdpReceiverWorker udpReceiverWorker;
 
 	// Service
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.clientReceiver = new DeviceReceiver();
-		Log.d(LOG_TAG, "+++ onCreate()");
-	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, flags, startId);
-		this.clientReceiver.start();
-		Log.d(LOG_TAG, "+++ onStartCommand(" + intent + ", " + flags + ", " + startId + ")");
-		return START_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-
-		// TODO
-
-		return null;
+		this.application = ((WifiMidiControllerApplication) getApplication());
+		this.udpReceiverWorkerStatus = false;
+		this.udpReceiverWorker = new UdpReceiverWorker();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		this.clientReceiver.interrupt();
-		this.clientReceiver = null;
-		Log.d(LOG_TAG, "+++ onDestroy()");
+		this.udpReceiverWorkerStatus = false;
+		this.udpReceiverWorker.interrupt();
+		this.udpReceiverWorker = null;
 	}
 
-	// Thread
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		super.onStartCommand(intent, flags, startId);
+		this.udpReceiverWorkerStatus = true;
+		this.udpReceiverWorker.start();
+		return Service.START_STICKY;
+	}
 
-	private class DeviceReceiver extends Thread {
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
 
-		public DeviceReceiver() {
-			super(UdpBroadcastService.class.getSimpleName() + "---" + DeviceReceiver.class.getSimpleName());
+	// UdpReceiverWorker
+
+	private class UdpReceiverWorker extends Thread {
+
+		public UdpReceiverWorker() {
+			super(UdpBroadcastService.LOG_TAG + "---" + UdpReceiverWorker.class.getSimpleName());
 		}
+
+		// Thread
 
 		@Override
 		public void run() {
-			while (clientReceiver != null) {
+			WifiMidiControllerApplication application = UdpBroadcastService.this.application;
+			boolean udpReceiverWorkerStatus = UdpBroadcastService.this.udpReceiverWorkerStatus;
+			while (udpReceiverWorkerStatus) {
 				try {
-
-					// TODO
-
-					Log.d(LOG_TAG, "+++ clientReceiver.run()");
-					Thread.sleep(CLIENT_RECEIVER_DELAY);
+					application.addUdpClient(application.getUdpReceiver().receive());
+					Thread.sleep(UdpBroadcastService.UDP_RECEIVER_WORKER_DELAY);
 				} catch (InterruptedException e) {
-
+					udpReceiverWorkerStatus = false;
 				}
 			}
 		}

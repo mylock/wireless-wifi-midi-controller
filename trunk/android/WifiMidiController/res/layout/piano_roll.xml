@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent" android:layout_height="match_parent">
+	style="@style/layout_basic">
 
 	<!-- FIXME: AbsoluteLayout is deprecated -->
 
 	<view class="cz.pblazek.wwmc.PianoRollActivity$PianoRollView"
-		android:id="@+id/piano_roll_view" android:layout_width="match_parent"
-		android:layout_height="match_parent" android:background="@drawable/background"
-		android:scaleType="matrix" android:visibility="visible"
-		android:hapticFeedbackEnabled="true" android:focusableInTouchMode="true">
-	</view>
+		android:id="@+id/view_piano_roll" style="@style/view_piano_roll" />
 
 </AbsoluteLayout>

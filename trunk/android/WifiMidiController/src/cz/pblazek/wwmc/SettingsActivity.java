@@ -6,55 +6,44 @@
 package cz.pblazek.wwmc;
 
 import android.app.ListActivity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View.OnClickListener;
+import android.widget.CheckBox;
+import android.widget.SimpleCursorAdapter;
+import cz.pblazek.wwmc.database.UdpClientHelper;
 
 /**
  * @author rtep.kezalb@gmail.com
  * 
  */
-public class SettingsActivity extends ListActivity implements OnSharedPreferenceChangeListener, OnItemClickListener {
-
-	public static final String LOG_TAG = SettingsActivity.class.getSimpleName();
+public class SettingsActivity extends ListActivity {
 
 	public static final String ACTION_NAME_SHOW_SETTINGS = "cz.pblazek.wwmc.SHOW_SETTINGS";
 
-	private SharedPreferences preferences;
+	private WifiMidiControllerApplication application;
 
 	// ListActivity
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.udp_client_list);
 
-		this.preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		this.preferences.registerOnSharedPreferenceChangeListener(this);
+		this.application = ((WifiMidiControllerApplication) getApplication());
 
-		// TODO it is currently only a test
-		ArrayAdapter<UdpClient> adapter = new ArrayAdapter<UdpClient>(this, android.R.layout.simple_list_item_multiple_choice, getTestUdpClients());
-		this.setListAdapter(adapter);
+		resetListAdapter();
+	}
 
-		ListView listView = getListView();
-		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		listView.setOnItemClickListener(this);
-
-		for (int i = 0; i < adapter.getCount(); i++) {
-			if (this.preferences.contains(adapter.getItem(i).getIp())) {
-				listView.setItemChecked(i, true);
-			}
-		}
+	@Override
+	protected void onPause() {
+		super.onPause();
+		this.application.clearDisabledUdpClients();
 	}
 
 	@Override
@@ -72,51 +61,68 @@ public class SettingsActivity extends ListActivity implements OnSharedPreference
 			finish();
 			optionsItemSelected = true;
 			break;
-		case R.id.menu_refresh:
-
-			// TODO
-
-			break;
+		// TODO future
+		// case R.id.menu_refresh:
+		// break;
 		default:
 			break;
 		}
 		return optionsItemSelected;
 	}
 
-	// OnSharedPreferenceChangeListener
+	// SettingsActivity
 
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		Log.d(LOG_TAG, "+++ onSharedPreferenceChanged(" + sharedPreferences + ", " + key + ")");
+	private void resetListAdapter() {
+		Cursor cursor = this.application.fetchUdpClients();
+		startManagingCursor(cursor);
+		SimpleCursorAdapter listAdapter = new ListAdapter(this, R.layout.udp_client_row, cursor, new String[] { UdpClientHelper.TABLE_UDP_CLIENT_ADDRESS,
+				UdpClientHelper.TABLE_UDP_CLIENT_PORT }, new int[] { R.id.list_row_address, R.id.list_row_port });
+		setListAdapter(listAdapter);
 	}
 
-	// OnItemClickListener
+	// ListAdapter
 
-	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		Object item = adapterView.getItemAtPosition(position);
-		if (item instanceof UdpClient) {
-			UdpClient udpClient = (UdpClient) item;
-			String ip = udpClient.getIp();
-			int port = udpClient.getPort();
+	private class ListAdapter extends SimpleCursorAdapter implements OnClickListener {
 
-			Editor editor = this.preferences.edit();
-			editor.remove(ip);
-			if (getListView().isItemChecked(position)) {
-				editor.putInt(ip, port);
+		public ListAdapter(Context context, int layout, Cursor cursor, String[] from, int[] to) {
+			super(context, layout, cursor, from, to);
+		}
+
+		// SimpleCursorAdapter
+
+		@Override
+		public void bindView(View view, Context context, Cursor cursor) {
+			super.bindView(view, context, cursor);
+			int enabled = cursor.getInt(cursor.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_ENABLED));
+			CheckBox enabledValue = (CheckBox) view.findViewById(R.id.list_row_enabled);
+			enabledValue.setChecked(enabled == 1 ? true : false);
+			enabledValue.setText(null);
+			enabledValue.setTag(cursor.getLong(cursor.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_ID)));
+			enabledValue.setOnClickListener(this);
+		}
+
+		// OnClickListener
+
+		// FIXME fake :-(
+		// I have a problem with onListItemClick on the original ListView
+		// because the row layout is defined outside the list layout!? Event is
+		// not invoked.
+
+		@Override
+		public void onClick(View view) {
+			CheckBox enabledValue = (CheckBox) view.findViewById(R.id.list_row_enabled);
+			Object tag = enabledValue.getTag();
+			SettingsActivity settingsActivity = SettingsActivity.this;
+			if (tag instanceof Long) {
+				long id = (Long) enabledValue.getTag();
+
+				// TODO freeze cursor position!
+
+				settingsActivity.application.enableUdpClient(id, enabledValue.isChecked());
 			}
-			editor.commit();
+			settingsActivity.resetListAdapter();
 		}
-	}
 
-	// Test
-
-	private UdpClient[] getTestUdpClients() {
-		UdpClient[] udpClients = new UdpClient[10];
-		for (int i = 0; i < udpClients.length; i++) {
-			udpClients[i] = new UdpClient("255.255.255." + i, 8888);
-		}
-		return udpClients;
 	}
 
 }

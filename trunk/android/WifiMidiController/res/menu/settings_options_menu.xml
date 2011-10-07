@@ -2,11 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item android:id="@+id/menu_back" android:title="@string/menu_back"
-		android:alphabeticShortcut="b" android:icon="@drawable/ic_menu_back">
-	</item>
+		android:alphabeticShortcut="b" android:icon="@drawable/ic_menu_back" />
 
-	<item android:id="@+id/menu_refresh" android:title="@string/menu_refresh"
-		android:alphabeticShortcut="r" android:icon="@drawable/ic_menu_refresh">
-	</item>
+	<!-- <item android:id="@+id/menu_refresh" android:title="@string/menu_refresh" 
+		android:alphabeticShortcut="r" android:icon="@drawable/ic_menu_refresh" /> -->
 
 </menu>
