@@ -3,7 +3,7 @@
  * 
  * Licensed under the GNU General Public License, Version 3
  */
-package cz.pblazek.wwmc;
+package cz.pblazek.wwmc.network;
 
 /**
  * @author rtep.kezalb@gmail.com
@@ -11,7 +11,7 @@ package cz.pblazek.wwmc;
  */
 public class UdpClient {
 
-	private String ip;
+	private String address;
 
 	private int port;
 
@@ -19,18 +19,18 @@ public class UdpClient {
 		super();
 	}
 
-	public UdpClient(String ip, int port) {
+	public UdpClient(String address, int port) {
 		super();
-		this.ip = ip;
+		this.address = address;
 		this.port = port;
 	}
 
-	public String getIp() {
-		return ip;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public int getPort() {
@@ -45,7 +45,7 @@ public class UdpClient {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+		result = prime * result + ((address == null) ? 0 : address.hashCode());
 		result = prime * result + port;
 		return result;
 	}
@@ -62,11 +62,11 @@ public class UdpClient {
 			return false;
 		}
 		UdpClient other = (UdpClient) obj;
-		if (ip == null) {
-			if (other.ip != null) {
+		if (address == null) {
+			if (other.address != null) {
 				return false;
 			}
-		} else if (!ip.equals(other.ip)) {
+		} else if (!address.equals(other.address)) {
 			return false;
 		}
 		if (port != other.port) {
@@ -77,7 +77,7 @@ public class UdpClient {
 
 	@Override
 	public String toString() {
-		return ip + ":" + port;
+		return address + ":" + port;
 	}
 
 }

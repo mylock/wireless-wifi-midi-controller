@@ -21,14 +21,13 @@ import android.graphics.Region;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 
 /**
  * @author rtep.kezalb@gmail.com
@@ -36,25 +35,39 @@ import android.view.WindowManager;
  */
 public class PianoRollActivity extends Activity {
 
-	public static final String LOG_TAG = PianoRollActivity.class.getSimpleName();
-
 	private static WifiMidiControllerApplication application;
 
 	// Activity
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN);
+		getWindow().clearFlags(LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
 		setContentView(R.layout.piano_roll);
-		((PianoRollActivity.PianoRollView) findViewById(R.id.piano_roll_view)).invalidate();
+		((PianoRollActivity.PianoRollView) findViewById(R.id.view_piano_roll)).invalidate();
 
 		PianoRollActivity.application = ((WifiMidiControllerApplication) getApplication());
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Intent intent = new Intent(UdpBroadcastReceiver.ACTION_NAME_UDP_BROADCAST_RECEIVER);
+		intent.putExtra(UdpBroadcastReceiver.UDP_BROADCAST_RECEIVER_STATUS, true);
+		sendBroadcast(intent);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Intent intent = new Intent(UdpBroadcastReceiver.ACTION_NAME_UDP_BROADCAST_RECEIVER);
+		intent.putExtra(UdpBroadcastReceiver.UDP_BROADCAST_RECEIVER_STATUS, false);
+		sendBroadcast(intent);
 	}
 
 	@Override
@@ -108,7 +121,6 @@ public class PianoRollActivity extends Activity {
 		@Override
 		protected void onDraw(Canvas canvas) {
 			super.onDraw(canvas);
-
 			for (Region touchedKeyRegion : this.touchedKeyRegions.values()) {
 				canvas.drawPath(touchedKeyRegion.getBoundaryPath(), this.keyPaint);
 			}
@@ -125,15 +137,15 @@ public class PianoRollActivity extends Activity {
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
 
-				// TODO necessary refactoring - undesirable behavior keyboard
-				// appears!
+				// TODO refactoring - undesirable behavior keyboard appears!
+				// TODO multitouched slide
 
 				Point point = new Point((int) event.getX(pointerIndex), (int) event.getY(pointerIndex));
 
 				for (Entry<NoteEnum, Region> entry : this.keyRegions.entrySet()) {
 					Region keyRegion = entry.getValue();
 					if ((keyRegion.contains(point.x, point.y)) && (!this.touchedKeyRegions.containsValue(keyRegion))) {
-						new PianoRollActivity.NoteSender().execute(entry.getKey());
+						new PianoRollActivity.UdpSenderWorker().execute(entry.getKey());
 
 						this.touchedKeyRegions.put(Integer.valueOf(pointerIndex), keyRegion);
 						break;
@@ -157,22 +169,16 @@ public class PianoRollActivity extends Activity {
 
 	}
 
-	// NoteSender
+	// UdpSenderWorker
 
-	private static class NoteSender extends AsyncTask<NoteEnum, Integer, Integer> {
+	private static class UdpSenderWorker extends AsyncTask<NoteEnum, Integer, Integer> {
 
 		@Override
 		protected Integer doInBackground(NoteEnum... noteEnums) {
-			try {
-				for (NoteEnum noteEnum : noteEnums) {
-					PianoRollActivity.application.getUdpSender().send(noteEnum.getTone());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e(LOG_TAG, "An error occurred when sending the UDP packet. (Network is unreachable.)");
+			for (NoteEnum noteEnum : noteEnums) {
+				PianoRollActivity.application.getUdpSender().send(noteEnum.getTone());
 			}
-
-			return 0; // it can be 0
+			return 0; // TODO it can be 0 (for future use)
 		}
 
 	}

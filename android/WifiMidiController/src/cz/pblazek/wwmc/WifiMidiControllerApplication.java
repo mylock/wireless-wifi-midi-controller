@@ -5,25 +5,29 @@
  */
 package cz.pblazek.wwmc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.preference.PreferenceManager;
+import android.database.Cursor;
 import android.util.Log;
+import cz.pblazek.wwmc.database.UdpClientAdapter;
+import cz.pblazek.wwmc.database.UdpClientHelper;
+import cz.pblazek.wwmc.network.UdpClient;
+import cz.pblazek.wwmc.network.UdpReceiver;
+import cz.pblazek.wwmc.network.UdpSender;
 
 /**
  * @author rtep.kezalb@gmail.com
  * 
  */
-public class WifiMidiControllerApplication extends Application implements OnSharedPreferenceChangeListener {
+public class WifiMidiControllerApplication extends Application {
 
-	public static final String LOG_TAG = WifiMidiControllerApplication.class.getSimpleName();
+	// TODO refactor synchronization
 
-	private SharedPreferences preferences;
+	private static final String LOG_TAG = WifiMidiControllerApplication.class.getSimpleName();
+
+	private UdpClientAdapter dbAdapter; // TODO close database helper
 
 	private volatile UdpSender udpSender;
 
@@ -35,31 +39,8 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 	public void onCreate() {
 		super.onCreate();
 
-		this.preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		this.preferences.registerOnSharedPreferenceChangeListener(this);
-
-		// TODO startService(new Intent(this, UdpBroadcastService.class));
-	}
-
-	// OnSharedPreferenceChangeListener
-
-	@Override
-	public void onTerminate() {
-		// TODO Auto-generated method stub
-
-		super.onTerminate();
-	}
-
-	// TODO destroy ... stopService(new Intent(this,
-	// UdpBroadcastService.class));
-
-	@Override
-	public synchronized void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-		// reset
-
-		this.udpSender = null;
-		this.udpReceiver = null;
+		this.dbAdapter = new UdpClientAdapter(this);
+		this.dbAdapter.open();
 	}
 
 	// WifiMidiControllerApplication
@@ -70,7 +51,7 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 			synchronized (this) {
 				udpSender = this.udpSender;
 				if (udpSender == null) {
-					this.udpSender = udpSender = new UdpSender(getUdpClients());
+					this.udpSender = udpSender = new UdpSender(getEnabledUdpClients());
 				}
 			}
 		}
@@ -90,14 +71,46 @@ public class WifiMidiControllerApplication extends Application implements OnShar
 		return udpReceiver;
 	}
 
-	private List<UdpClient> getUdpClients() {
-		List<UdpClient> udpClients = new ArrayList<UdpClient>();
-		for (Entry<String, ?> entry : this.preferences.getAll().entrySet()) {
-			UdpClient udpClient = new UdpClient(entry.getKey(), (Integer) entry.getValue());
-			udpClients.add(udpClient);
-			Log.d(LOG_TAG, "+++ " + udpClient);
+	// DB
+
+	public synchronized void addUdpClient(UdpClient udpClient) {
+		if (udpClient != null) {
+			Cursor cursor = this.dbAdapter.finByAddressAndPort(udpClient.getAddress(), udpClient.getPort());
+			if (cursor.getCount() == 0) {
+				this.dbAdapter.create(udpClient.getAddress(), udpClient.getPort(), false);
+				Log.d(LOG_TAG, "+++ UdpClient was added");
+			}
 		}
-		return udpClients;
+	}
+
+	public synchronized Cursor fetchUdpClients() {
+		Log.d(LOG_TAG, "+++ fetch all UdpClients");
+		return this.dbAdapter.findAll();
+	}
+
+	public synchronized void enableUdpClient(long id, boolean enabled) {
+		this.dbAdapter.setEnabledById(id, enabled);
+		this.udpSender = null;
+		Log.d(LOG_TAG, "+++ reset UdpSender");
+	}
+
+	public synchronized void clearDisabledUdpClients() {
+		this.dbAdapter.removeByEnabled(false);
+		Log.d(LOG_TAG, "+++ clean disabled UdpClients");
+	}
+
+	private synchronized Set<UdpClient> getEnabledUdpClients() {
+		Set<UdpClient> enabledUdpClients = new HashSet<UdpClient>();
+		Cursor cursor = this.dbAdapter.findByEnabled(true);
+		if (cursor.moveToFirst()) {
+			do {
+				UdpClient udpClient = new UdpClient(cursor.getString(cursor.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_ADDRESS)), cursor.getInt(cursor
+						.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_PORT)));
+				enabledUdpClients.add(udpClient);
+				Log.d(LOG_TAG, "+++ changed: " + udpClient);
+			} while (cursor.moveToNext());
+		}
+		return enabledUdpClients;
 	}
 
 }

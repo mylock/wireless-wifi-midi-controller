@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/layout_list_row">
+
+	<TableRow android:id="@+id/list_row">
+
+		<ImageView style="@style/list_row_icon" />
+
+		<TextView android:text="@string/list_row_address" style="@style/list_row_label" />
+		<TextView android:id="@+id/list_row_address" android:text="@+id/list_row_address_value"
+			style="@style/list_row_value" />
+
+		<TextView android:text="@string/list_row_port" style="@style/list_row_label" />
+		<TextView android:id="@+id/list_row_port" android:text="@+id/list_row_port_value"
+			style="@style/list_row_value" />
+
+		<CheckBox android:id="@+id/list_row_enabled" android:text="@+id/list_row_enabled_value"
+			style="@style/list_row_flag" />
+
+	</TableRow>
+
+</TableLayout>
