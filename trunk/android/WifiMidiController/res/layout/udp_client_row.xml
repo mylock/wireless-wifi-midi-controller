@@ -2,7 +2,10 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	style="@style/layout_list_row">
 
-	<TableRow android:id="@+id/list_row">
+	<TableRow>
+
+		<TextView android:id="@+id/list_row_position" android:text="@+id/list_row_position_value"
+			style="@style/list_row_position" />
 
 		<ImageView style="@style/list_row_icon" />
 

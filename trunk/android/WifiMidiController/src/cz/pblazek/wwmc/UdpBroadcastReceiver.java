@@ -29,7 +29,7 @@ public class UdpBroadcastReceiver extends BroadcastReceiver {
 		Toast toast;
 		if (intent.getBooleanExtra(UdpBroadcastReceiver.UDP_BROADCAST_RECEIVER_STATUS, false)) {
 
-			// TODO
+			// TODO future
 			// require - android.permission.CHANGE_WIFI_MULTICAST_STATE
 			// WifiManager wifiMananger = (WifiManager)
 			// context.getSystemService(Context.WIFI_SERVICE);

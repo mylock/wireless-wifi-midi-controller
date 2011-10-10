@@ -2,5 +2,6 @@
 <resources>
 
 	<color name="wwmc_back">#ffff00</color>
+	<color name="wwmc_light">#9bffffff</color>
 
 </resources>
