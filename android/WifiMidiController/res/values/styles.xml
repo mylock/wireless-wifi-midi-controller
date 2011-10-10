@@ -6,7 +6,7 @@
 		<item name="android:layout_height">match_parent</item>
 	</style>
 	<style name="layout_list_row" parent="@style/layout_basic">
-		<item name="android:stretchColumns">4</item>
+		<item name="android:stretchColumns">5</item>
 	</style>
 
 	<style name="view_piano_roll" parent="@style/layout_basic">
@@ -21,26 +21,31 @@
 		<item name="android:src">@drawable/app_wwmc</item>
 		<item name="android:layout_width">36px</item>
 		<item name="android:layout_height">36px</item>
-		<item name="android:layout_marginLeft">20px</item>
+		<item name="android:layout_marginLeft">5px</item>
 		<item name="android:layout_marginTop">20px</item>
-	</style>
-	<style name="list_row_label" parent="@android:style/TextAppearance.Medium">
-		<item name="android:layout_width">wrap_content</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:layout_marginLeft">50px</item>
-		<item name="android:textSize">10sp</item>
-		<item name="android:textColor">@color/wwmc_back</item>
-	</style>
-	<style name="list_row_value" parent="@android:style/TextAppearance.Medium">
-		<item name="android:layout_width">wrap_content</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:padding">3dip</item>
-		<item name="android:textSize">18sp</item>
 	</style>
 	<style name="list_row_flag">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_marginRight">20px</item>
+	</style>
+	<style name="list_row_basic" parent="@android:style/TextAppearance.Medium">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:padding">3dip</item>
+	</style>
+	<style name="list_row_position" parent="@style/list_row_basic">
+		<item name="android:layout_marginLeft">5px</item>
+		<item name="android:textSize">8sp</item>
+		<item name="android:textColor">@color/wwmc_light</item>
+	</style>
+	<style name="list_row_label" parent="@style/list_row_basic">
+		<item name="android:layout_marginLeft">50px</item>
+		<item name="android:textSize">10sp</item>
+		<item name="android:textColor">@color/wwmc_back</item>
+	</style>
+	<style name="list_row_value" parent="@style/list_row_basic">
+		<item name="android:textSize">18sp</item>
 	</style>
 
 </resources>

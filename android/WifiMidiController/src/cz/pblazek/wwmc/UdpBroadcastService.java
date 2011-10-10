@@ -5,6 +5,8 @@
  */
 package cz.pblazek.wwmc;
 
+import java.util.concurrent.TimeUnit;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -17,7 +19,7 @@ public class UdpBroadcastService extends Service {
 
 	private static final String LOG_TAG = UdpBroadcastService.class.getSimpleName();
 
-	private static final int UDP_RECEIVER_WORKER_DELAY = 2000;
+	private static final int UDP_RECEIVER_WORKER_DELAY = 100;
 
 	private WifiMidiControllerApplication application;
 
@@ -74,7 +76,7 @@ public class UdpBroadcastService extends Service {
 			while (udpReceiverWorkerStatus) {
 				try {
 					application.addUdpClient(application.getUdpReceiver().receive());
-					Thread.sleep(UdpBroadcastService.UDP_RECEIVER_WORKER_DELAY);
+					TimeUnit.MILLISECONDS.sleep(UdpBroadcastService.UDP_RECEIVER_WORKER_DELAY);
 				} catch (InterruptedException e) {
 					udpReceiverWorkerStatus = false;
 				}

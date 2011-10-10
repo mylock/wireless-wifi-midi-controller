@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import cz.pblazek.wwmc.database.UdpClientHelper;
 
 /**
@@ -99,14 +100,14 @@ public class SettingsActivity extends ListActivity {
 			enabledValue.setText(null);
 			enabledValue.setTag(cursor.getLong(cursor.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_ID)));
 			enabledValue.setOnClickListener(this);
+			TextView positionValue = (TextView) view.findViewById(R.id.list_row_position);
+			positionValue.setText(String.format("%0" + String.valueOf(cursor.getCount()).length() + "d", cursor.getPosition()));
 		}
 
 		// OnClickListener
 
 		// FIXME fake :-(
-		// I have a problem with onListItemClick on the original ListView
-		// because the row layout is defined outside the list layout!? Event is
-		// not invoked.
+		// I have a problem with onListItemClick on the original ListView because the row layout is defined outside the list layout!? Event is not invoked.
 
 		@Override
 		public void onClick(View view) {

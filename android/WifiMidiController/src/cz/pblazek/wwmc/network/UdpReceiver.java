@@ -6,9 +6,9 @@
 package cz.pblazek.wwmc.network;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.MulticastSocket;
 import java.net.SocketException;
 
 import android.util.Log;
@@ -23,7 +23,7 @@ public class UdpReceiver {
 
 	private static int UDP_RECEIVER_BROADCAST_PORT = 55555;
 
-	private static int UDP_RECEIVER_TIMEOUT = 5000;
+	private static int UDP_RECEIVER_TIMEOUT = 2000;
 
 	// UdpReceiver
 
@@ -31,13 +31,15 @@ public class UdpReceiver {
 		UdpClient udpClient = null;
 		DatagramSocket socket = null; // TODO maybe ... MulticastSocket
 		try {
-			socket = new MulticastSocket(UdpReceiver.UDP_RECEIVER_BROADCAST_PORT);
+			socket = new DatagramSocket(UdpReceiver.UDP_RECEIVER_BROADCAST_PORT);
 			socket.setSoTimeout(UdpReceiver.UDP_RECEIVER_TIMEOUT);
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			socket.receive(packet);
 			udpClient = new UdpClient(packet.getAddress().getHostAddress(), packet.getPort());
 			Log.d(LOG_TAG, "+++ " + udpClient);
+		} catch (InterruptedIOException e) {
+			// socket received timeout
 		} catch (SocketException e) {
 			Log.e(LOG_TAG, "An error occurred while opening the UDP socket (receiver).");
 		} catch (IOException e) {
@@ -45,7 +47,6 @@ public class UdpReceiver {
 		} finally {
 			if (socket != null) {
 				socket.close();
-				socket = null;
 			}
 		}
 		return udpClient;

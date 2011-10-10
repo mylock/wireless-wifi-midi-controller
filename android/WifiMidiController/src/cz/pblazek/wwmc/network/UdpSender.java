@@ -52,10 +52,8 @@ public class UdpSender {
 			int port = udpClient.getPort();
 			DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
 			this.socket.send(packet);
-			// Log.d(LOG_TAG, "+++ Packet [data=" + new String(data) +
-			// ", data.length=" + data.length + ", address=" +
-			// address.getHostAddress() + ", port=" + port
-			// + "]");
+			// Log.d(LOG_TAG, "+++ Packet [data=" + new String(data) + ", data.length=" + data.length + ", address=" + address.getHostAddress() + ", port=" +
+			// port + "]");
 		} catch (Exception e) {
 			Log.e(LOG_TAG, "An error occurred when sending the UDP packet. (Network is unreachable.)");
 		}
