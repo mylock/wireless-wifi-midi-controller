@@ -33,7 +33,7 @@ public class UdpReceiver {
 		try {
 			socket = new DatagramSocket(UdpReceiver.UDP_RECEIVER_BROADCAST_PORT);
 			socket.setSoTimeout(UdpReceiver.UDP_RECEIVER_TIMEOUT);
-			byte[] data = new byte[1024];
+			byte[] data = new byte[512];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			socket.receive(packet);
 			udpClient = new UdpClient(packet.getAddress().getHostAddress(), packet.getPort());
