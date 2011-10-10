@@ -5,6 +5,8 @@
  */
 package cz.pblazek.wwmc.test;
 
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
@@ -40,7 +42,9 @@ public class PianoRollFrame extends JFrame {
 		Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 		setBounds(center.x - PianoRollFrame.WINDOW_WIDTH / 2, center.y - PianoRollFrame.WINDOW_HEIGHT / 2, PianoRollFrame.WINDOW_WIDTH,
 				PianoRollFrame.WINDOW_HEIGHT);
-		getContentPane().setLayout(null);
+		Container container = getContentPane();
+		container.setBackground(Color.BLACK);
+		container.setLayout(null);
 		createKeys();
 	}
 

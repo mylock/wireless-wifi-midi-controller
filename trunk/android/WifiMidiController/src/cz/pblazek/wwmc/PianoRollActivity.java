@@ -68,6 +68,7 @@ public class PianoRollActivity extends Activity {
 		Intent intent = new Intent(UdpBroadcastReceiver.ACTION_NAME_UDP_BROADCAST_RECEIVER);
 		intent.putExtra(UdpBroadcastReceiver.UDP_BROADCAST_RECEIVER_STATUS, false);
 		sendBroadcast(intent);
+		PianoRollActivity.application.cleanDisabledUdpClients();
 	}
 
 	@Override
@@ -146,7 +147,6 @@ public class PianoRollActivity extends Activity {
 					Region keyRegion = entry.getValue();
 					if ((keyRegion.contains(point.x, point.y)) && (!this.touchedKeyRegions.containsValue(keyRegion))) {
 						new PianoRollActivity.UdpSenderWorker().execute(entry.getKey());
-
 						this.touchedKeyRegions.put(Integer.valueOf(pointerIndex), keyRegion);
 						break;
 					}

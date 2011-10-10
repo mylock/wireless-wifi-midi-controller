@@ -28,11 +28,6 @@ public class UdpSender {
 	public UdpSender(Set<UdpClient> udpClients) {
 		super();
 		this.udpClients = udpClients;
-		try {
-			this.socket = new DatagramSocket();
-		} catch (SocketException e) {
-			Log.e(LOG_TAG, "An error occurred while opening the UDP socket (sender).");
-		}
 	}
 
 	// UdpSender
@@ -40,9 +35,18 @@ public class UdpSender {
 	// TODO synchronize different order
 
 	public void send(String rawData) {
-		byte[] data = rawData.getBytes();
-		for (UdpClient udpClient : this.udpClients) {
-			send(udpClient, data);
+		try {
+			this.socket = new DatagramSocket();
+			byte[] data = rawData.getBytes();
+			for (UdpClient udpClient : this.udpClients) {
+				send(udpClient, data);
+			}
+		} catch (SocketException e) {
+			Log.e(LOG_TAG, "An error occurred while opening the UDP socket (sender).");
+		} finally {
+			if (this.socket != null) {
+				this.socket.close();
+			}
 		}
 	}
 
@@ -58,7 +62,5 @@ public class UdpSender {
 			Log.e(LOG_TAG, "An error occurred when sending the UDP packet. (Network is unreachable.)");
 		}
 	}
-
-	// TODO close ...
 
 }

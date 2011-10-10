@@ -17,10 +17,6 @@ public class Key extends JPanel {
 
 	private static final long serialVersionUID = 4187744341564811805L;
 
-	public static final Color KEY_COLOR_WHITE = new Color(255, 255, 255);
-
-	public static final Color KEY_COLOR_BLACK = new Color(0, 0, 0);
-
 	public static final Color KEY_COLOR_BACK = new Color(255, 255, 100);
 
 	private final Color color;

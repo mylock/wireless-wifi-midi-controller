@@ -94,7 +94,7 @@ public class WifiMidiControllerApplication extends Application {
 		Log.d(LOG_TAG, "+++ reset UdpSender");
 	}
 
-	public synchronized void clearDisabledUdpClients() {
+	public synchronized void cleanDisabledUdpClients() {
 		this.dbAdapter.removeByEnabled(false);
 		Log.d(LOG_TAG, "+++ clean disabled UdpClients");
 	}

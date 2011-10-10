@@ -44,7 +44,7 @@ public class SettingsActivity extends ListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		this.application.clearDisabledUdpClients();
+		this.application.cleanDisabledUdpClients();
 	}
 
 	@Override
