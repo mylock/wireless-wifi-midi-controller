@@ -101,7 +101,7 @@ public class SettingsActivity extends ListActivity {
 			enabledValue.setTag(cursor.getLong(cursor.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_ID)));
 			enabledValue.setOnClickListener(this);
 			TextView positionValue = (TextView) view.findViewById(R.id.list_row_position);
-			positionValue.setText(String.format("%0" + String.valueOf(cursor.getCount()).length() + "d", cursor.getPosition()));
+			positionValue.setText(String.format("%0" + String.valueOf(cursor.getCount()).length() + "d", cursor.getPosition() + 1));
 		}
 
 		// OnClickListener

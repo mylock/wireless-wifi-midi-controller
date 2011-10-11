@@ -8,7 +8,6 @@ package cz.pblazek.wwmc.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -17,21 +16,18 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public class UdpClientAdapter {
 
-	private Context context;
-
 	private SQLiteDatabase database;
 
 	private UdpClientHelper dbHelper;
 
 	public UdpClientAdapter(Context context) {
-		this.context = context;
+		this.dbHelper = new UdpClientHelper(context);
 	}
 
 	// UdpClientAdapter
 
-	public UdpClientAdapter open() throws SQLException {
-		this.dbHelper = new UdpClientHelper(context);
-		this.database = dbHelper.getWritableDatabase();
+	public UdpClientAdapter open() {
+		this.database = this.dbHelper.getWritableDatabase();
 		return this;
 	}
 
@@ -73,6 +69,7 @@ public class UdpClientAdapter {
 				null, null);
 	}
 
+	// it has only one use
 	private static ContentValues createContentValues(String address, int port, int enabled) {
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(UdpClientHelper.TABLE_UDP_CLIENT_ADDRESS, address);

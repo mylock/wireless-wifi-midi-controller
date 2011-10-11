@@ -52,6 +52,7 @@ public class PianoRollActivity extends Activity {
 		((PianoRollActivity.PianoRollView) findViewById(R.id.view_piano_roll)).invalidate();
 
 		PianoRollActivity.application = ((WifiMidiControllerApplication) getApplication());
+		PianoRollActivity.application.openDb();
 	}
 
 	@Override
@@ -68,7 +69,13 @@ public class PianoRollActivity extends Activity {
 		Intent intent = new Intent(UdpBroadcastReceiver.ACTION_NAME_UDP_BROADCAST_RECEIVER);
 		intent.putExtra(UdpBroadcastReceiver.UDP_BROADCAST_RECEIVER_STATUS, false);
 		sendBroadcast(intent);
+	}
+
+	@Override
+	protected void onDestroy() {
 		PianoRollActivity.application.cleanDisabledUdpClients();
+		PianoRollActivity.application.closeDb();
+		super.onDestroy();
 	}
 
 	@Override

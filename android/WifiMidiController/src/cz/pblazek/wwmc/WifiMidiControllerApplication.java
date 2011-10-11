@@ -27,7 +27,7 @@ public class WifiMidiControllerApplication extends Application {
 
 	private static final String LOG_TAG = WifiMidiControllerApplication.class.getSimpleName();
 
-	private UdpClientAdapter dbAdapter; // TODO close database helper
+	private UdpClientAdapter dbAdapter;
 
 	private volatile UdpSender udpSender;
 
@@ -40,7 +40,6 @@ public class WifiMidiControllerApplication extends Application {
 		super.onCreate();
 
 		this.dbAdapter = new UdpClientAdapter(this);
-		this.dbAdapter.open();
 	}
 
 	// WifiMidiControllerApplication
@@ -72,6 +71,14 @@ public class WifiMidiControllerApplication extends Application {
 	}
 
 	// DB
+
+	public void openDb() {
+		this.dbAdapter.open();
+	}
+
+	public void closeDb() {
+		this.dbAdapter.close();
+	}
 
 	public synchronized void addUdpClient(UdpClient udpClient) {
 		if (udpClient != null) {
