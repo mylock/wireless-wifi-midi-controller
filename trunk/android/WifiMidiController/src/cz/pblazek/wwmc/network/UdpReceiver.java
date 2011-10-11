@@ -37,7 +37,7 @@ public class UdpReceiver {
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			socket.receive(packet);
 			udpClient = new UdpClient(packet.getAddress().getHostAddress(), packet.getPort());
-			Log.d(LOG_TAG, "+++ " + udpClient);
+			// Log.d(LOG_TAG, "+++ " + udpClient);
 		} catch (InterruptedIOException e) {
 			// socket received timeout
 		} catch (SocketException e) {
