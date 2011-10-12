@@ -140,14 +140,13 @@ public class PianoRollActivity extends Activity {
 			int pointerIndex = event.getActionIndex();
 			// int pointerId = event.getPointerId(pointerIndex);
 
+			// TODO refactoring - undesirable behavior keyboard appears!
+			// TODO multitouched slide
+
 			switch (action) {
 			case MotionEvent.ACTION_MOVE:
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-
-				// TODO refactoring - undesirable behavior keyboard appears!
-				// TODO multitouched slide
-
 				Point point = new Point((int) event.getX(pointerIndex), (int) event.getY(pointerIndex));
 
 				for (Entry<NoteEnum, Region> entry : this.keyRegions.entrySet()) {

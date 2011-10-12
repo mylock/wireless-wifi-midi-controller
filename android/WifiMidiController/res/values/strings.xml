@@ -5,6 +5,8 @@
 	<string name="menu_settings">Settings</string>
 	<string name="menu_back">Back</string>
 	<string name="menu_refresh">Refresh</string>
+	<string name="menu_select">Select All</string>
+	<string name="menu_deselect">Deselect All</string>
 	<string name="list_row_address">ADDRESS:</string>
 	<string name="list_row_port">PORT:</string>
 
