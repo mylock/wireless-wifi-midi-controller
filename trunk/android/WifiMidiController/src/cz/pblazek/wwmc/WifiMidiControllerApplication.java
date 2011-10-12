@@ -27,7 +27,7 @@ public class WifiMidiControllerApplication extends Application {
 
 	private static final String LOG_TAG = WifiMidiControllerApplication.class.getSimpleName();
 
-	private UdpClientAdapter dbAdapter;
+	private volatile UdpClientAdapter dbAdapter;
 
 	private volatile UdpSender udpSender;
 
@@ -51,6 +51,7 @@ public class WifiMidiControllerApplication extends Application {
 				udpSender = this.udpSender;
 				if (udpSender == null) {
 					this.udpSender = udpSender = new UdpSender(getEnabledUdpClients());
+					Log.d(LOG_TAG, "+++ reset UdpSender");
 				}
 			}
 		}
@@ -64,6 +65,7 @@ public class WifiMidiControllerApplication extends Application {
 				udpReceiver = this.udpReceiver;
 				if (udpReceiver == null) {
 					this.udpReceiver = udpReceiver = new UdpReceiver();
+					Log.d(LOG_TAG, "+++ reset UdpReceiver");
 				}
 			}
 		}
@@ -72,19 +74,19 @@ public class WifiMidiControllerApplication extends Application {
 
 	// DB
 
-	public void openDb() {
+	public synchronized void openDb() {
 		this.dbAdapter.open();
+		Log.d(LOG_TAG, "+++ open DB");
 	}
 
-	public void closeDb() {
+	public synchronized void closeDb() {
 		this.dbAdapter.close();
+		Log.d(LOG_TAG, "+++ close DB");
 	}
 
 	public synchronized void addUdpClient(UdpClient udpClient) {
 		if (udpClient != null) {
-			Cursor cursor = this.dbAdapter.finByAddressAndPort(udpClient.getAddress(), udpClient.getPort());
-			if (cursor.getCount() == 0) {
-				this.dbAdapter.create(udpClient.getAddress(), udpClient.getPort(), false);
+			if (this.dbAdapter.create(udpClient.getAddress(), udpClient.getPort(), false) > -1) {
 				Log.d(LOG_TAG, "+++ UdpClient was added");
 			}
 		}
@@ -96,20 +98,29 @@ public class WifiMidiControllerApplication extends Application {
 	}
 
 	public synchronized void enableUdpClient(long id, boolean enabled) {
-		this.dbAdapter.setEnabledById(id, enabled);
-		this.udpSender = null;
-		Log.d(LOG_TAG, "+++ reset UdpSender");
+		if (this.dbAdapter.setEnabledById(id, enabled)) {
+			this.udpSender = null;
+			Log.d(LOG_TAG, "+++ change one selection");
+		}
+	}
+
+	public synchronized void enableUdpClients(boolean enabled) {
+		if (this.dbAdapter.setEnabled(enabled)) {
+			this.udpSender = null;
+			Log.d(LOG_TAG, "+++ change selection");
+		}
 	}
 
 	public synchronized void cleanDisabledUdpClients() {
-		this.dbAdapter.removeByEnabled(false);
-		Log.d(LOG_TAG, "+++ clean disabled UdpClients");
+		if (this.dbAdapter.removeByEnabled(false)) {
+			Log.d(LOG_TAG, "+++ clean disabled UdpClients");
+		}
 	}
 
 	private synchronized Set<UdpClient> getEnabledUdpClients() {
 		Set<UdpClient> enabledUdpClients = new HashSet<UdpClient>();
 		Cursor cursor = this.dbAdapter.findByEnabled(true);
-		if (cursor.moveToFirst()) {
+		if ((cursor != null) && (cursor.moveToFirst())) {
 			do {
 				UdpClient udpClient = new UdpClient(cursor.getString(cursor.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_ADDRESS)), cursor.getInt(cursor
 						.getColumnIndex(UdpClientHelper.TABLE_UDP_CLIENT_PORT)));

@@ -7,4 +7,10 @@
 	<!-- <item android:id="@+id/menu_refresh" android:title="@string/menu_refresh" 
 		android:alphabeticShortcut="r" android:icon="@drawable/ic_menu_refresh" /> -->
 
+	<item android:id="@+id/menu_select" android:title="@string/menu_select"
+		android:alphabeticShortcut="s" android:icon="@drawable/ic_menu_select" />
+
+	<item android:id="@+id/menu_deselect" android:title="@string/menu_deselect"
+		android:alphabeticShortcut="d" android:icon="@drawable/ic_menu_deselect" />
+
 </menu>

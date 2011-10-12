@@ -34,7 +34,7 @@ public class UdpSender {
 
 	// TODO synchronize different order
 
-	public void send(String rawData) {
+	public synchronized void send(String rawData) {
 		try {
 			this.socket = new DatagramSocket();
 			byte[] data = rawData.getBytes();
