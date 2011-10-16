@@ -1,8 +1,21 @@
 /*
- * Copyright (C) 2011 The Wireless WiFi MIDI Controller Open Source Project
- * 
- * Licensed under the GNU General Public License, Version 3
+ * Wireless WiFi MIDI Controller
+ * Copyright (C) 2011 Petr Blazek
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package cz.pblazek.wwmc;
 
 import java.util.Map;
@@ -182,7 +195,9 @@ public class PianoRollActivity extends Activity {
 		@Override
 		protected Integer doInBackground(NoteEnum... noteEnums) {
 			for (NoteEnum noteEnum : noteEnums) {
-				PianoRollActivity.application.getUdpSender().send(noteEnum.getTone());
+				byte[] data = new byte[] { (byte) (noteEnum.getMidiNum() >>> 24), (byte) (noteEnum.getMidiNum() >> 16 & 0xff),
+						(byte) (noteEnum.getMidiNum() >> 8 & 0xff), (byte) (noteEnum.getMidiNum() & 0xff) };
+				PianoRollActivity.application.getUdpSender().send(data);
 			}
 			return 0; // TODO it can be 0 (for future use)
 		}

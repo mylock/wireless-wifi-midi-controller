@@ -1,8 +1,21 @@
 /*
- * Copyright (C) 2011 The Wireless WiFi MIDI Controller Open Source Project
- * 
- * Licensed under the GNU General Public License, Version 3
+ * Wireless WiFi MIDI Controller
+ * Copyright (C) 2011 Petr Blazek
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package cz.pblazek.wwmc.test;
 
 import java.awt.Color;
@@ -50,8 +63,9 @@ public class PianoRollFrame extends JFrame {
 
 	//
 
-	public void sendToPiano(String tone) {
-		PianoKeyEnum pianoKeyEnum = PianoKeyEnum.findByTone(tone);
+	public void sendToPianoRoll(byte[] data) {
+		int midiNum = (data[0] << 24) + ((data[1] & 0xff) << 16) + ((data[2] & 0xff) << 8) + (data[3] & 0xff);
+		PianoKeyEnum pianoKeyEnum = PianoKeyEnum.findByMidiNum(midiNum);
 		if (pianoKeyEnum != null) {
 			AsyncWorker asyncWorker = new AsyncWorker(pianoKeyEnum);
 			asyncWorker.start();
@@ -59,26 +73,26 @@ public class PianoRollFrame extends JFrame {
 	}
 
 	private void createKeys() {
-		getContentPane().add(PianoKeyEnum.PK_C00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_C00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_CIS00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_D00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_D00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_DIS00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_E00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_E00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_F00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_F00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_FIS00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_G00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_G00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_GIS00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_A00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_A00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_AIS00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_H00.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_H00.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_C01.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_C05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_C05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_CIS05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_D05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_D05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_DIS05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_E05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_E05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_F05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_F05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_FIS05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_G05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_G05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_GIS05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_A05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_A05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_AIS05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_H05.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_H05.getKey()[1]);
+		getContentPane().add(PianoKeyEnum.PK_C06.getKey()[0]);
 	}
 
 	private class AsyncWorker extends Thread {

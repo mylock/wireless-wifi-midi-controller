@@ -1,12 +1,21 @@
 /*
- * Copyright (C) 2011 The Wireless WiFi MIDI Controller Open Source Project
+ * Wireless WiFi MIDI Controller
+ * Copyright (C) 2011 Petr Blazek
  *
- * Licensed under the GNU General Public License, Version 3
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Author: Petr Blazek
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "WiFly.h"
 #include "Config.h"
 
 // the GPIO pins on the SPI UART that are connected to WiFly module pins
@@ -18,6 +27,7 @@ const char AUTH_MODE [] = "4";
 const char AUTH_PHRASE [] = "focus###";
 const char JOIN_POLICY [] = "1";
 const char IP_PROTOCOL [] = "1";
+const char IP_LOCAL_PORT [] = "8888";
 
 Config::Config() {
   Serial.begin(9600);
@@ -35,7 +45,7 @@ void Config::hardwareReset() {
   Serial.println("... setting GPIO direction");
   SpiSerial.ioSetDirection(BIT_RESET | BIT_PIO9);
 
-  Serial.println("... the first reboot");
+  Serial.println("... first reboot");
   reboot(BIT_PIO9);
   readResponse(1000);
 
@@ -47,11 +57,10 @@ void Config::hardwareReset() {
     readResponse(1500);
   }
 
-  Serial.println("... the second reboot");
+  Serial.println("... second reboot");
   reboot();
   readResponse(1000);
 }
-
 
 void Config::setupWiFly() {
   WiFly.begin();
@@ -79,30 +88,36 @@ void Config::setupWiFly() {
     Serial.println(IP_PROTOCOL);
     WiFly.sendCommand(completeCommand("set ip proto", IP_PROTOCOL), false, "AOK");
 
+    Serial.print("... setting ip local port to: ");
+    Serial.println(IP_LOCAL_PORT);
+    WiFly.sendCommand(completeCommand("set ip localport", IP_LOCAL_PORT), false, "AOK");
+
     Serial.println("... saving configuration");
     WiFly.sendCommand("save", false, "Storing in config");
-
 
     SpiSerial.println("show net");
     readResponse(1000);
     SpiSerial.println("get uart");
     readResponse(1000);
 
-    Serial.println("... the third reboot");
+    Serial.println("... final reboot");
     reboot();
     readResponse(1000);
+
+    Serial.print("... ip: ");
+    Serial.println(WiFly.ip());
   }
 }
 
 // private
 
-void  Config::reboot(byte pio9State) {
+void Config::reboot(const byte pio9State) {
   SpiSerial.ioSetState( (BIT_RESET & ~BIT_RESET) | pio9State);
   delay(1);
   SpiSerial.ioSetState(BIT_RESET | pio9State);
 }
 
-void Config::readResponse(int timeOut) {
+void Config::readResponse(const int timeOut) {
   int target = millis() + timeOut;
   while((millis() < target) || SpiSerial.available() > 0) {
     if (SpiSerial.available()) {
@@ -112,10 +127,11 @@ void Config::readResponse(int timeOut) {
 }
 
 char *Config::completeCommand(const char command[], const char value[]) {
-  char fullCommand [100];
+  char fullCommand[100];
   fullCommand[0] = '\0';
   strcat(fullCommand, command);
   strcat(fullCommand, " ");
   strcat(fullCommand, value);
   return fullCommand;
 }
+
