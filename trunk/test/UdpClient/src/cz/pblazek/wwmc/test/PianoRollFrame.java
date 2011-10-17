@@ -72,27 +72,34 @@ public class PianoRollFrame extends JFrame {
 		}
 	}
 
+	/*
+	 * FUTURE
+	 * 
+	 * public void sendToPianoRoll(byte[] data) { int midiNum = (data[0] << 24) + ((data[1] & 0xff) << 16) + ((data[2] & 0xff) << 8) + (data[3] & 0xff);
+	 * AsyncWorker asyncWorker = new AsyncWorker(midiNum); asyncWorker.start(); }
+	 */
+
 	private void createKeys() {
-		getContentPane().add(PianoKeyEnum.PK_C05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_C05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_CIS05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_D05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_D05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_DIS05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_E05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_E05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_F05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_F05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_FIS05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_G05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_G05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_GIS05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_A05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_A05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_AIS05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_H05.getKey()[0]);
-		getContentPane().add(PianoKeyEnum.PK_H05.getKey()[1]);
-		getContentPane().add(PianoKeyEnum.PK_C06.getKey()[0]);
+		getContentPane().add(PianoKeyEnum.PK_C04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_C04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_CIS04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_D04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_D04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_DIS04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_E04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_E04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_F04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_F04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_FIS04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_G04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_G04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_GIS04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_A04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_A04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_AIS04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_H04.getKeys()[0]);
+		getContentPane().add(PianoKeyEnum.PK_H04.getKeys()[1]);
+		getContentPane().add(PianoKeyEnum.PK_C05.getKeys()[0]);
 	}
 
 	private class AsyncWorker extends Thread {
@@ -108,11 +115,11 @@ public class PianoRollFrame extends JFrame {
 		public void run() {
 			super.run();
 			try {
-				for (Key key : this.pianoKeyEnum.getKey()) {
+				for (Key key : this.pianoKeyEnum.getKeys()) {
 					key.setBackground(Key.KEY_COLOR_BACK);
 				}
 				TimeUnit.MILLISECONDS.sleep(200);
-				for (Key key : this.pianoKeyEnum.getKey()) {
+				for (Key key : this.pianoKeyEnum.getKeys()) {
 					key.setBackground(key.getColor());
 				}
 			} catch (InterruptedException e) {
@@ -121,5 +128,27 @@ public class PianoRollFrame extends JFrame {
 		}
 
 	}
+
+	/*
+	 * FUTURE
+	 * 
+	 * private class AsyncWorker extends Thread {
+	 * 
+	 * private static final int DATA_TYPE_DIFFERENCE = 500;
+	 * 
+	 * private int midiNum;
+	 * 
+	 * public AsyncWorker(int midiNum) { super(); this.midiNum = midiNum; }
+	 * 
+	 * @Override public void run() { super.run(); if ((this.midiNum - AsyncWorker.DATA_TYPE_DIFFERENCE) < 0) { System.out.println(this.midiNum);
+	 * paintKeys(this.midiNum, true); } else { System.out.println(this.midiNum); paintKeys((this.midiNum - AsyncWorker.DATA_TYPE_DIFFERENCE), false); } }
+	 * 
+	 * //
+	 * 
+	 * private void paintKeys(int midiNum, boolean isTouched) { PianoKeyEnum pianoKeyEnum = PianoKeyEnum.findByMidiNum(midiNum); if (pianoKeyEnum != null) {
+	 * Key[] keys = pianoKeyEnum.getKeys(); for (Key key : keys) { key.setBackground((isTouched) ? Key.KEY_COLOR_BACK : key.getColor()); } } }
+	 * 
+	 * }
+	 */
 
 }

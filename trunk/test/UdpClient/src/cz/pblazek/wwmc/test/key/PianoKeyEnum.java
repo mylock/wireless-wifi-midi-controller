@@ -26,43 +26,43 @@ import java.awt.Color;
  */
 public enum PianoKeyEnum {
 
-	PK_C05("C05;", new Key[] { new Key(1, 1, 60, 136, Color.WHITE), new Key(1, 137, 80, 136, Color.WHITE) }, 72),
+	PK_C04("C04;", new Key[] { new Key(1, 1, 60, 136, Color.WHITE), new Key(1, 137, 80, 136, Color.WHITE) }, 60),
 
-	PK_CIS05("C#05;", new Key[] { new Key(62, 1, 40, 136, Color.BLACK) }, 73),
+	PK_CIS04("C#04;", new Key[] { new Key(62, 1, 40, 136, Color.BLACK) }, 61),
 
-	PK_D05("D05;", new Key[] { new Key(102, 1, 40, 136, Color.WHITE), new Key(82, 137, 80, 136, Color.WHITE) }, 74),
+	PK_D04("D04;", new Key[] { new Key(102, 1, 40, 136, Color.WHITE), new Key(82, 137, 80, 136, Color.WHITE) }, 62),
 
-	PK_DIS05("D#05;", new Key[] { new Key(143, 1, 40, 136, Color.BLACK) }, 75),
+	PK_DIS04("D#04;", new Key[] { new Key(143, 1, 40, 136, Color.BLACK) }, 63),
 
-	PK_E05("E05;", new Key[] { new Key(183, 1, 60, 136, Color.WHITE), new Key(163, 137, 80, 136, Color.WHITE) }, 76),
+	PK_E04("E04;", new Key[] { new Key(183, 1, 60, 136, Color.WHITE), new Key(163, 137, 80, 136, Color.WHITE) }, 64),
 
-	PK_F05("F05;", new Key[] { new Key(244, 1, 60, 136, Color.WHITE), new Key(244, 137, 80, 136, Color.WHITE) }, 77),
+	PK_F04("F04;", new Key[] { new Key(244, 1, 60, 136, Color.WHITE), new Key(244, 137, 80, 136, Color.WHITE) }, 65),
 
-	PK_FIS05("F#05;", new Key[] { new Key(305, 1, 40, 136, Color.BLACK) }, 78),
+	PK_FIS04("F#04;", new Key[] { new Key(305, 1, 40, 136, Color.BLACK) }, 66),
 
-	PK_G05("G05;", new Key[] { new Key(345, 1, 40, 136, Color.WHITE), new Key(325, 137, 80, 136, Color.WHITE) }, 79),
+	PK_G04("G04;", new Key[] { new Key(345, 1, 40, 136, Color.WHITE), new Key(325, 137, 80, 136, Color.WHITE) }, 67),
 
-	PK_GIS05("G#05;", new Key[] { new Key(386, 1, 40, 136, Color.BLACK) }, 80),
+	PK_GIS04("G#04;", new Key[] { new Key(386, 1, 40, 136, Color.BLACK) }, 68),
 
-	PK_A05("A05;", new Key[] { new Key(426, 1, 40, 136, Color.WHITE), new Key(406, 137, 80, 136, Color.WHITE) }, 81),
+	PK_A04("A04;", new Key[] { new Key(426, 1, 40, 136, Color.WHITE), new Key(406, 137, 80, 136, Color.WHITE) }, 69),
 
-	PK_AIS05("A#05;", new Key[] { new Key(467, 1, 40, 136, Color.BLACK) }, 82),
+	PK_AIS04("A#04;", new Key[] { new Key(467, 1, 40, 136, Color.BLACK) }, 70),
 
-	PK_H05("H05;", new Key[] { new Key(507, 1, 60, 136, Color.WHITE), new Key(487, 137, 80, 136, Color.WHITE) }, 83),
+	PK_H04("H04;", new Key[] { new Key(507, 1, 60, 136, Color.WHITE), new Key(487, 137, 80, 136, Color.WHITE) }, 71),
 
-	PK_C06("C06;", new Key[] { new Key(568, 1, 80, 272, Color.WHITE) }, 84),
+	PK_C05("C05;", new Key[] { new Key(568, 1, 80, 272, Color.WHITE) }, 72),
 
 	;
 
 	private final String tone; // TODO future
 
-	private final Key[] key;
+	private final Key[] keys;
 
 	private final int midiNum;
 
-	private PianoKeyEnum(final String tone, final Key[] key, final int midiNum) {
+	private PianoKeyEnum(final String tone, final Key[] keys, final int midiNum) {
 		this.tone = tone;
-		this.key = key;
+		this.keys = keys;
 		this.midiNum = midiNum;
 	}
 
@@ -70,8 +70,8 @@ public enum PianoKeyEnum {
 		return tone;
 	}
 
-	public Key[] getKey() {
-		return key;
+	public Key[] getKeys() {
+		return keys;
 	}
 
 	public int getMidiNum() {

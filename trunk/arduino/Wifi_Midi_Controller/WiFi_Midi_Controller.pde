@@ -27,6 +27,7 @@
 #include "Config.h"
 
 #define DATA_LEN 4
+#define DATA_TYPE_DIFFERENCE 500
 #define MIDI_CHANNEL_INIT 4
 #define MIDI_CHANNEL_NOTE 1
 #define MIDI_VELOCITY_NOTE_ON 127
@@ -57,18 +58,21 @@ void loop() {
 void sendSimpleNote() {
   while(SpiSerial.available() > 0) {
     data[index] = SpiSerial.read();
-    if (index == 3) {
-      byte midiNum = (data[0] << 24) + ((data[1] & 0xff) << 16) + ((data[2] & 0xff) << 8) + (data[3] & 0xff);
+    if (index == (DATA_LEN - 1)) {
+      int midiNum = (data[0] << 24) + ((data[1] & 0xff) << 16) + ((data[2] & 0xff) << 8) + (data[3] & 0xff);
 
-      MIDI.sendNoteOn(midiNum, MIDI_VELOCITY_NOTE_ON, MIDI_CHANNEL_NOTE);
-      // millis(); ...
-      MIDI.sendNoteOff(midiNum, MIDI_VELOCITY_NOTE_OFF, MIDI_CHANNEL_NOTE);
+      if ((midiNum - DATA_TYPE_DIFFERENCE) < 0) {
+        MIDI.sendNoteOn(midiNum, MIDI_VELOCITY_NOTE_ON, MIDI_CHANNEL_NOTE);
+      } 
+      else {
+        MIDI.sendNoteOff((midiNum - DATA_TYPE_DIFFERENCE), MIDI_VELOCITY_NOTE_OFF, MIDI_CHANNEL_NOTE);
+      }
 
       index = 0;
       continue;
     }
     index++;
-  }  
+  }
 }
 
 // protothreads
