@@ -33,31 +33,31 @@ public enum NoteEnum {
 
 	UNKNOWN("unknown", null, -1),
 
-	N_C05("C05;", new Rect[] { new Rect(0, 2, 69, 240), new Rect(0, 240, 99, 478) }, 72),
+	N_C04("C04;", new Rect[] { new Rect(0, 2, 69, 240), new Rect(0, 240, 99, 478) }, 60),
 
-	N_CIS05("C#05;", new Rect[] { new Rect(70, 1, 129, 239) }, 73),
+	N_CIS04("C#04;", new Rect[] { new Rect(70, 1, 129, 239) }, 61),
 
-	N_D05("D05;", new Rect[] { new Rect(130, 2, 169, 240), new Rect(100, 240, 199, 478) }, 74),
+	N_D04("D04;", new Rect[] { new Rect(130, 2, 169, 240), new Rect(100, 240, 199, 478) }, 62),
 
-	N_DIS05("D#05;", new Rect[] { new Rect(170, 1, 229, 239) }, 75),
+	N_DIS04("D#04;", new Rect[] { new Rect(170, 1, 229, 239) }, 63),
 
-	N_E05("E05;", new Rect[] { new Rect(230, 2, 299, 240), new Rect(200, 240, 299, 478) }, 76),
+	N_E04("E04;", new Rect[] { new Rect(230, 2, 299, 240), new Rect(200, 240, 299, 478) }, 64),
 
-	N_F05("F05;", new Rect[] { new Rect(300, 2, 369, 240), new Rect(300, 240, 399, 478) }, 77),
+	N_F04("F04;", new Rect[] { new Rect(300, 2, 369, 240), new Rect(300, 240, 399, 478) }, 65),
 
-	N_FIS05("F#05;", new Rect[] { new Rect(370, 1, 429, 239) }, 78),
+	N_FIS04("F#04;", new Rect[] { new Rect(370, 1, 429, 239) }, 66),
 
-	N_G05("G05;", new Rect[] { new Rect(430, 2, 469, 240), new Rect(400, 240, 499, 478) }, 79),
+	N_G04("G04;", new Rect[] { new Rect(430, 2, 469, 240), new Rect(400, 240, 499, 478) }, 67),
 
-	N_GIS05("G#05;", new Rect[] { new Rect(470, 1, 529, 239) }, 80),
+	N_GIS04("G#04;", new Rect[] { new Rect(470, 1, 529, 239) }, 68),
 
-	N_A05("A05;", new Rect[] { new Rect(530, 2, 569, 240), new Rect(500, 240, 599, 478) }, 81),
+	N_A04("A04;", new Rect[] { new Rect(530, 2, 569, 240), new Rect(500, 240, 599, 478) }, 69),
 
-	N_AIS05("A#05;", new Rect[] { new Rect(570, 1, 629, 239) }, 82),
+	N_AIS04("A#04;", new Rect[] { new Rect(570, 1, 629, 239) }, 70),
 
-	N_H05("H05;", new Rect[] { new Rect(630, 2, 699, 240), new Rect(600, 240, 699, 478) }, 83),
+	N_H04("H04;", new Rect[] { new Rect(630, 2, 699, 240), new Rect(600, 240, 699, 478) }, 71),
 
-	N_C06("C06;", new Rect[] { new Rect(700, 2, 799, 478) }, 84),
+	N_C05("C05;", new Rect[] { new Rect(700, 2, 799, 478) }, 72),
 
 	;
 
@@ -91,13 +91,13 @@ public enum NoteEnum {
 
 	public static Map<NoteEnum, Region> getKeyRegions() {
 		Map<NoteEnum, Region> keyRegions = new ConcurrentHashMap<NoteEnum, Region>(); // ???
-		for (NoteEnum noteEnum : NoteEnum.values()) {
-			if ((noteEnum != NoteEnum.UNKNOWN) && (noteEnum.getKeyRects() != null)) {
+		for (NoteEnum value : NoteEnum.values()) {
+			if ((value != NoteEnum.UNKNOWN) && (value.getKeyRects() != null)) {
 				Region keyRegion = new Region();
-				for (Rect keyRect : noteEnum.getKeyRects()) {
+				for (Rect keyRect : value.getKeyRects()) {
 					keyRegion.op(keyRect, Op.UNION);
 				}
-				keyRegions.put(noteEnum, keyRegion);
+				keyRegions.put(value, keyRegion);
 			}
 		}
 		return keyRegions;

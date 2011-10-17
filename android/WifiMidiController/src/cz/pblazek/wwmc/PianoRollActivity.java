@@ -117,9 +117,13 @@ public class PianoRollActivity extends Activity {
 
 	private static class PianoRollView extends View {
 
+		private static final int DATA_TYPE_DIFFERENCE = 500;
+
 		private Map<NoteEnum, Region> keyRegions;
 
 		private Map<Integer, Region> touchedKeyRegions;
+
+		private Map<Integer, Integer> midiNumBuffer;
 
 		private Paint keyPaint;
 
@@ -131,6 +135,7 @@ public class PianoRollActivity extends Activity {
 			this.keyRegions = NoteEnum.getKeyRegions();
 
 			this.touchedKeyRegions = new ConcurrentHashMap<Integer, Region>(); // ???
+			this.midiNumBuffer = new ConcurrentHashMap<Integer, Integer>(); // ???
 
 			this.keyPaint = new Paint();
 			this.keyPaint.setStyle(Style.FILL);
@@ -156,29 +161,43 @@ public class PianoRollActivity extends Activity {
 			// TODO refactoring - undesirable behavior keyboard appears!
 			// TODO multitouched slide
 
+			Point point = null;
 			switch (action) {
-			case MotionEvent.ACTION_MOVE:
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				Point point = new Point((int) event.getX(pointerIndex), (int) event.getY(pointerIndex));
-
+				point = new Point((int) event.getX(pointerIndex), (int) event.getY(pointerIndex));
 				for (Entry<NoteEnum, Region> entry : this.keyRegions.entrySet()) {
 					Region keyRegion = entry.getValue();
 					if ((keyRegion.contains(point.x, point.y)) && (!this.touchedKeyRegions.containsValue(keyRegion))) {
-						new PianoRollActivity.UdpSenderWorker().execute(entry.getKey());
-						this.touchedKeyRegions.put(Integer.valueOf(pointerIndex), keyRegion);
+						put(entry.getKey().getMidiNum(), pointerIndex, keyRegion);
 						break;
 					}
 				}
-
 				break;
 			case MotionEvent.ACTION_UP:
-				this.touchedKeyRegions.clear();
+				clear();
 				break;
 			case MotionEvent.ACTION_POINTER_UP:
-				this.touchedKeyRegions.remove(pointerIndex);
+				Region touchedKeyRegion = this.touchedKeyRegions.get(pointerIndex);
+				if (touchedKeyRegion != null) {
+					remove(pointerIndex);
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
+				point = new Point((int) event.getX(pointerIndex), (int) event.getY(pointerIndex));
+				for (Entry<NoteEnum, Region> entry : this.keyRegions.entrySet()) {
+					Region keyRegion = entry.getValue();
+					if ((keyRegion.contains(point.x, point.y)) && (!this.touchedKeyRegions.containsValue(keyRegion))) {
+						event.setAction(MotionEvent.ACTION_UP);
+						onTouchEvent(event);
+						put(entry.getKey().getMidiNum(), pointerIndex, keyRegion);
+						break;
+					}
+				}
 				break;
 			default:
+				event.setAction(MotionEvent.ACTION_UP);
+				onTouchEvent(event);
 				break;
 			}
 
@@ -186,18 +205,44 @@ public class PianoRollActivity extends Activity {
 			return true;
 		}
 
+		// TODO
+
+		private synchronized void put(int midiNum, int pointerIndex, Region keyRegion) {
+			new PianoRollActivity.UdpSenderWorker().execute(midiNum);
+			this.touchedKeyRegions.put(pointerIndex, keyRegion);
+			this.midiNumBuffer.put(pointerIndex, midiNum);
+		}
+
+		private synchronized void remove(int pointerIndex) {
+			Integer midiNum = this.midiNumBuffer.get(pointerIndex);
+			if (midiNum != null) {
+				new PianoRollActivity.UdpSenderWorker().execute(midiNum + PianoRollView.DATA_TYPE_DIFFERENCE);
+				this.touchedKeyRegions.remove(pointerIndex);
+				this.midiNumBuffer.remove(pointerIndex);
+			}
+		}
+
+		private synchronized void clear() {
+			for (Integer key : this.touchedKeyRegions.keySet()) {
+				new PianoRollActivity.UdpSenderWorker().execute(this.midiNumBuffer.get(key) + PianoRollView.DATA_TYPE_DIFFERENCE);
+			}
+			this.touchedKeyRegions.clear();
+			this.midiNumBuffer.clear();
+		}
+
 	}
 
 	// UdpSenderWorker
 
-	private static class UdpSenderWorker extends AsyncTask<NoteEnum, Integer, Integer> {
+	private static class UdpSenderWorker extends AsyncTask<Integer, Integer, Integer> {
 
 		@Override
-		protected Integer doInBackground(NoteEnum... noteEnums) {
-			for (NoteEnum noteEnum : noteEnums) {
-				byte[] data = new byte[] { (byte) (noteEnum.getMidiNum() >>> 24), (byte) (noteEnum.getMidiNum() >> 16 & 0xff),
-						(byte) (noteEnum.getMidiNum() >> 8 & 0xff), (byte) (noteEnum.getMidiNum() & 0xff) };
-				PianoRollActivity.application.getUdpSender().send(data);
+		protected Integer doInBackground(Integer... midiNums) {
+			if (midiNums != null) {
+				for (Integer midiNum : midiNums) {
+					byte[] data = new byte[] { (byte) (midiNum >>> 24), (byte) (midiNum >> 16 & 0xff), (byte) (midiNum >> 8 & 0xff), (byte) (midiNum & 0xff) };
+					PianoRollActivity.application.getUdpSender().send(data);
+				}
 			}
 			return 0; // TODO it can be 0 (for future use)
 		}
